@@ -1,13 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace MonoGameNetworking.Commands.MovementCommands;
 
-public class DownCommand : ICommand
+public class DownCommand : IMovementCommand
 {
-    public DownCommand(uint playerId)
-    {
-        this.PlayerID = playerId;
-    } 
-    public uint PlayerID { get; set; }
+    public Guid EntityID { get; set; }
     public Vector2 MovementVector { get;} = new Vector2(0, 1);
 }

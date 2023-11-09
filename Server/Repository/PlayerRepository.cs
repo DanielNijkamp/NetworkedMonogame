@@ -1,16 +1,19 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.ObjectModel;
+using Microsoft.Xna.Framework;
 
 namespace Server.Repository;
 
 public class PlayerRepository
 {
-    private Dictionary<uint, Vector2> playerPositions;
+    private Dictionary<Guid, Vector2> playerPositions;
     
-    public void SetPlayerPosition(uint playerID,Vector2 pos)
+    public void SetPlayerPosition(Guid EntityID,Vector2 pos)
     {
-        playerPositions[playerID] = pos;
+        playerPositions[EntityID] = pos;
     }
-    //all async tasks
-    //keeps kvp of players: [playerID, position]
-    //function to modify positional data for specific player
+
+    public Dictionary<Guid, Vector2> GetPositions()
+    {
+        return playerPositions;
+    }
 }

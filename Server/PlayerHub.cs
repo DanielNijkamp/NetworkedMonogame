@@ -4,5 +4,5 @@ namespace Server;
 
 public class PlayerHub : Hub
 {
-    //keep track of players currently connected
+    //keep track of clients and their respective EntityID
 }
