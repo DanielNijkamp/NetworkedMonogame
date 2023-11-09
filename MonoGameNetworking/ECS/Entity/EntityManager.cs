@@ -27,11 +27,6 @@ public class EntityManager
         return Entities.FirstOrDefault(e => e.EntityID == ID);
     }
 
-    public IEnumerable<Entity> GetEntitiesWith<T>() where T : class, IComponent
-    {
-        return Entities.Where(e => e.HasComponent<T>());
-    }
-
     public IEnumerable<Entity> GetEntitiesWith<T>(params T[] c)
     {
         return Entities.Where(e => e.HasComponents(c));

@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGameNetworking.ECS;
@@ -9,19 +10,33 @@ namespace MonoGameNetworking;
 
 public class Game1 : Game
 {
+    //SignalR decleration
+    private readonly HubConnection hubConnection;
+    
+    //Monogame declaration
     private static GraphicsDeviceManager _graphics;
     
+    //ECS declaration
     private readonly EntityManager entityManager;
-
     private readonly InputSystem inputSystem;
     private readonly RenderSystem renderSystem;
     private readonly TransformSystem transformSystem;
 
+    //Client data
     private readonly Guid ClientID;
     
     public Game1()
     {
+        //Client data initialization
         ClientID = Guid.NewGuid();
+        
+        //signalR initialization
+        /*hubConnection = new HubConnectionBuilder()
+            .WithUrl("")
+            .Build();*/
+
+        hubConnection.StartAsync();
+        
         //Monogame initialization
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
@@ -55,6 +70,5 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.CornflowerBlue);
         renderSystem.Process();
         base.Draw(gameTime);
-        
     }
 }

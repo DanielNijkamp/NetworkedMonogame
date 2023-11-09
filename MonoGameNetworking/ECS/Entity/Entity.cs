@@ -41,13 +41,6 @@ public class Entity
         return components.Any(c => c is T);
     }
 
-    public bool HasComponent<T>(out T value) where T : class, IComponent
-    {
-        var foundComponent = components.OfType<T>().FirstOrDefault();
-        value = foundComponent;
-        return value != null;
-    }
-
     public bool HasComponents<T>(params T[] components)
     {
         return components.Any(c => c is T);
