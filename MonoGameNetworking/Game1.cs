@@ -10,6 +10,7 @@ namespace MonoGameNetworking;
 
 public class Game1 : Game
 {
+    
     //SignalR decleration
     private readonly HubConnection hubConnection;
     
@@ -17,7 +18,7 @@ public class Game1 : Game
     private static GraphicsDeviceManager _graphics;
     
     //ECS declaration
-    private readonly EntityManager entityManager;
+    private readonly World world;
     private readonly InputSystem inputSystem;
     private readonly RenderSystem renderSystem;
     private readonly TransformSystem transformSystem;
@@ -33,9 +34,9 @@ public class Game1 : Game
         //signalR initialization
         /*hubConnection = new HubConnectionBuilder()
             .WithUrl("")
-            .Build();*/
+            .Build();
 
-        hubConnection.StartAsync();
+        hubConnection.StartAsync();*/
         
         //Monogame initialization
         _graphics = new GraphicsDeviceManager(this);
@@ -43,19 +44,23 @@ public class Game1 : Game
         IsMouseVisible = true;
         
         //Infrastructure initialization
-        entityManager = new EntityManager();
-        renderSystem = new RenderSystem(entityManager);
+        world = new World();
+        renderSystem = new RenderSystem(world);
         inputSystem = new InputSystem(ClientID);
-        transformSystem = new TransformSystem(entityManager, inputSystem);
+        transformSystem = new TransformSystem(world, inputSystem);
+        
+        //turn on to burn your GPU
+        //_graphics.SynchronizeWithVerticalRetrace = false;
+        //base.IsFixedTimeStep = false;
         
     }
     protected override void LoadContent()
     {
         //Game logic initialization
-        var player = entityManager.CreateEntity(ClientID);
-        player.AddComponent(new TransformComponent{Velocity = 5f});
-        player.AddComponent(new RenderComponent(_graphics.GraphicsDevice, Content.Load<Texture2D>("ball")));
-        
+        var player = world.CreateEntity(
+            ClientID,
+            new TransformComponent{Velocity = 5f}, 
+            new RenderComponent(_graphics.GraphicsDevice, Content.Load<Texture2D>("ball")));
         transformSystem.Initialize(ClientID);
     }
     

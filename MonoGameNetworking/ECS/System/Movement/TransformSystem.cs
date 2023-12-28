@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using MonoGameNetworking.ECS.Components;
 using MonoGameNetworking.Commands;
@@ -9,22 +10,21 @@ namespace MonoGameNetworking.ECS.System;
 
 public class TransformSystem : ISystem
 {
-    private readonly EntityManager entityManager;
+    private readonly World _world;
     private readonly InputSystem inputSystem;
 
     private TransformComponent component;
 
-    public TransformSystem(EntityManager entityManager, InputSystem inputSystem)
+    public TransformSystem(World world, InputSystem inputSystem)
     {
-        this.entityManager = entityManager;
+        this._world = world;
         this.inputSystem = inputSystem;
         
     }
 
     public void Initialize(Guid EnityTargetID)
     {
-        var entity = this.entityManager.GetEntityById(EnityTargetID);
-        entity.GetComponent(out component);
+        component = this._world.entities[EnityTargetID].OfType<TransformComponent>().FirstOrDefault();
         inputSystem.CommandCreated += SetPosition;
     }
     

@@ -7,33 +7,36 @@ namespace MonoGameNetworking.ECS.System;
 
 public class RenderSystem : ISystem
 {
-    private readonly EntityManager entityManager;
+    private readonly World _world;
 
-    public RenderSystem(EntityManager entityManager)
+    public RenderSystem(World world)
     {
-        this.entityManager = entityManager;
+        this._world = world;
     }
     
     public void Process()
     {
-        foreach (var entity in entityManager.GetEntitiesWith(typeof(TransformComponent), typeof(RenderComponent)))
+        var components = _world.GetComponentForTypesImmutable(typeof(TransformComponent), typeof(RenderComponent));
+
+        var length = components[0].Count;
+        for (int i = 0; i < length; i++)
         {
-            var p = entity.GetComponent<TransformComponent>();
-            var c = entity.GetComponent<RenderComponent>();
+            var transformComponent = components[0][i] as TransformComponent;
+            var renderComponent = components[1][i] as RenderComponent;
             
-            c.Sprite.Begin();
-            c.Sprite.Draw(
-                c.Texture,
-                p.Position,
+            renderComponent.Sprite.Begin();
+            renderComponent.Sprite.Draw(
+                renderComponent.Texture,
+                transformComponent.Position,
                 null,
                 Color.White,
                 0f,
-                new Vector2(c.Texture.Width / 2, c.Texture.Height / 2),
+                new Vector2(renderComponent.Texture.Width / 2, renderComponent.Texture.Height / 2),
                 Vector2.One,
                 SpriteEffects.None,
                 0f
             );
-            c.Sprite.End();
+            renderComponent.Sprite.End();
         }
         
     }
