@@ -1,4 +1,4 @@
-﻿namespace MonoGameNetworking.ECS;
+﻿namespace ECS;
 
 public interface IComponent
 {

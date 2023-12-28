@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MonoGameNetworking.Commands;
+﻿namespace Commands;
 
 public interface ICommand
 {

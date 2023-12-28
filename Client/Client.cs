@@ -1,18 +1,18 @@
 ﻿using System;
-using Microsoft.AspNetCore.SignalR.Client;
+using ECS;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGameNetworking.ECS;
 using MonoGameNetworking.ECS.Components;
 using MonoGameNetworking.ECS.System;
+using MonoGameNetworking.ECS.System.Movement;
 
 namespace MonoGameNetworking;
 
-public class Game1 : Game
+public class Client : Game
 {
     
     //SignalR decleration
-    private readonly HubConnection hubConnection;
+    //private readonly HubConnection hubConnection;
     
     //Monogame declaration
     private static GraphicsDeviceManager _graphics;
@@ -26,7 +26,7 @@ public class Game1 : Game
     //Client data
     private readonly Guid ClientID;
     
-    public Game1()
+    public Client()
     {
         //Client data initialization
         ClientID = Guid.NewGuid();
@@ -57,10 +57,7 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         //Game logic initialization
-        var player = world.CreateEntity(
-            ClientID,
-            new TransformComponent{Velocity = 5f}, 
-            new RenderComponent(_graphics.GraphicsDevice, Content.Load<Texture2D>("ball")));
+        world.CreateEntity(ClientID, new TransformComponent{Velocity = 5f}, new RenderComponent(_graphics.GraphicsDevice, Content.Load<Texture2D>("ball")));
         transformSystem.Initialize(ClientID);
     }
     

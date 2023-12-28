@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ECS;
+using Microsoft.Xna.Framework;
 
 namespace MonoGameNetworking.ECS.Components;
 

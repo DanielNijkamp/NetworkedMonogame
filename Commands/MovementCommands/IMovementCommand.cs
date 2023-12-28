@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace MonoGameNetworking.Commands.MovementCommands;
+namespace Commands.MovementCommands;
 
 public interface IMovementCommand : ICommand
 {

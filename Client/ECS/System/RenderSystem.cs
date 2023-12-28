@@ -1,4 +1,4 @@
-﻿using System;
+﻿using ECS;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGameNetworking.ECS.Components;
@@ -24,8 +24,8 @@ public class RenderSystem : ISystem
             var transformComponent = components[0][i] as TransformComponent;
             var renderComponent = components[1][i] as RenderComponent;
             
-            renderComponent.Sprite.Begin();
-            renderComponent.Sprite.Draw(
+            renderComponent?.Sprite.Begin();
+            renderComponent?.Sprite.Draw(
                 renderComponent.Texture,
                 transformComponent.Position,
                 null,
@@ -36,7 +36,7 @@ public class RenderSystem : ISystem
                 SpriteEffects.None,
                 0f
             );
-            renderComponent.Sprite.End();
+            renderComponent?.Sprite.End();
         }
         
     }

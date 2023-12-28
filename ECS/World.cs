@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-
-namespace MonoGameNetworking.ECS;
+﻿namespace ECS;
 
 public sealed class World
 {
-    public Dictionary<Guid, IComponent[]> entities = new(); //key-value based storage of our world
-    public Dictionary<Type, List<IComponent>> componentsMap = new(); //per-component type storage of the instance of that type
+    //key-value pair storage of entity and the components, for per-entity processing
+    public Dictionary<Guid, IComponent[]> entities = new();
+    //a per-component type-instance map where we can retrieve all the component of a certain type.
+    //used by systems to iterate strictly by component instead of retrieving the component by entity
+    private Dictionary<Type, List<IComponent>> componentsMap = new();
 
 
     public KeyValuePair<Guid, IComponent[]> CreateEntity(params IComponent[] components)
@@ -80,7 +78,6 @@ public sealed class World
                 result.Add(arr);
             } 
         }
-
         return result.ToArray();
     }
     
