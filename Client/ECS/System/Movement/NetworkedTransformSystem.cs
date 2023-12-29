@@ -5,12 +5,12 @@ namespace MonoGameNetworking.ECS.System.Movement;
 
 public class NetworkedTransformSystem : ISystem
 {
-    private readonly World world;
+    private readonly BaseWorld _baseWorld;
     private readonly InputSystem inputSystem;
     
-    public NetworkedTransformSystem(World world, InputSystem inputSystem)
+    public NetworkedTransformSystem(BaseWorld baseWorld, InputSystem inputSystem)
     {
-        this.world = world;
+        this._baseWorld = baseWorld;
         this.inputSystem = inputSystem;
     }
     

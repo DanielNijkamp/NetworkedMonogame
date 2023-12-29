@@ -2,6 +2,7 @@
 using ECS;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGameNetworking.ECS;
 using MonoGameNetworking.ECS.Components;
 using MonoGameNetworking.ECS.System;
 using MonoGameNetworking.ECS.System.Movement;
@@ -18,7 +19,7 @@ public class Client : Game
     private static GraphicsDeviceManager _graphics;
     
     //ECS declaration
-    private readonly World world;
+    private readonly BaseWorld baseWorld;
     private readonly InputSystem inputSystem;
     private readonly RenderSystem renderSystem;
     private readonly TransformSystem transformSystem;
@@ -44,10 +45,10 @@ public class Client : Game
         IsMouseVisible = true;
         
         //Infrastructure initialization
-        world = new World();
-        renderSystem = new RenderSystem(world);
+        baseWorld = new BaseWorld();
+        renderSystem = new RenderSystem(baseWorld);
         inputSystem = new InputSystem(ClientID);
-        transformSystem = new TransformSystem(world, inputSystem);
+        transformSystem = new TransformSystem(baseWorld, inputSystem);
         
         //turn on to burn your GPU
         //_graphics.SynchronizeWithVerticalRetrace = false;
@@ -57,7 +58,7 @@ public class Client : Game
     protected override void LoadContent()
     {
         //Game logic initialization
-        world.CreateEntity(ClientID, new TransformComponent{Velocity = 5f}, new RenderComponent(_graphics.GraphicsDevice, Content.Load<Texture2D>("ball")));
+        baseWorld.CreateEntity(ClientID, new TransformComponent{Velocity = 5f}, new RenderComponent(_graphics.GraphicsDevice, Content.Load<Texture2D>("ball")));
         transformSystem.Initialize(ClientID);
     }
     

@@ -16,9 +16,15 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\ECS\ECS.csproj" />
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+        
+
+    <ItemGroup>
+      <Folder Include="Handlers\" />
+    </ItemGroup>
 
     </ItemGroup>
 

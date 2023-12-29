@@ -7,16 +7,16 @@ namespace MonoGameNetworking.ECS.System;
 
 public class RenderSystem : ISystem
 {
-    private readonly World _world;
+    private readonly BaseWorld _baseWorld;
 
-    public RenderSystem(World world)
+    public RenderSystem(BaseWorld baseWorld)
     {
-        this._world = world;
+        this._baseWorld = baseWorld;
     }
     
     public void Process()
     {
-        var components = _world.GetComponentForTypesImmutable(typeof(TransformComponent), typeof(RenderComponent));
+        var components = _baseWorld.GetComponentForTypesImmutable(typeof(TransformComponent), typeof(RenderComponent));
 
         var length = components[0].Count;
         for (int i = 0; i < length; i++)

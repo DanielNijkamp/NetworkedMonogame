@@ -9,21 +9,21 @@ namespace MonoGameNetworking.ECS.System.Movement;
 
 public class TransformSystem : ISystem
 {
-    private readonly World world;
+    private readonly BaseWorld baseWorld;
     private readonly InputSystem inputSystem;
 
     private TransformComponent component;
 
-    public TransformSystem(World world, InputSystem inputSystem)
+    public TransformSystem(BaseWorld baseWorld, InputSystem inputSystem)
     {
-        this.world = world;
+        this.baseWorld = baseWorld;
         this.inputSystem = inputSystem;
         
     }
 
     public void Initialize(Guid EnityTargetID)
     {
-        component = world.entities[EnityTargetID].OfType<TransformComponent>().FirstOrDefault()!;
+        component = baseWorld.Entities[EnityTargetID].OfType<TransformComponent>().FirstOrDefault()!;
         inputSystem.CommandCreated += SetPosition!;
     }
     
