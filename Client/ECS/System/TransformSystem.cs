@@ -23,7 +23,7 @@ public class TransformSystem : ISystem
 
     public void Initialize(Guid EnityTargetID)
     {
-        component = baseWorld.Entities[EnityTargetID].OfType<TransformComponent>().FirstOrDefault()!;
+        component = baseWorld.GetEntityById(EnityTargetID).Value.OfType<TransformComponent>().FirstOrDefault()!;
         inputSystem.CommandCreated += SetPosition!;
     }
     

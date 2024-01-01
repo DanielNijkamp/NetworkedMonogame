@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="MediatR" Version="12.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.10"/>
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="7.0.13" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
@@ -16,19 +17,17 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Commands\Commands.csproj" />
         <ProjectReference Include="..\ECS\ECS.csproj" />
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
-        
+    </ItemGroup>
+
+
 
     <ItemGroup>
       <Folder Include="Handlers\" />
     </ItemGroup>
-
-    </ItemGroup>
-
-
-
 
 </Project>

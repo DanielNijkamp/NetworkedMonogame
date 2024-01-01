@@ -1,2 +1,4 @@
-﻿using var game = new MonoGameNetworking.Client();
+﻿using MonoGameNetworking;
+
+using var game = new Client();
 game.Run();

@@ -1,4 +1,5 @@
-﻿using ECS;
+﻿using System;
+using ECS;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGameNetworking.ECS.Components;
@@ -18,6 +19,7 @@ public class RenderSystem : ISystem
     {
         var components = _baseWorld.GetComponentForTypesImmutable(typeof(TransformComponent), typeof(RenderComponent));
 
+        
         var length = components[0].Count;
         for (int i = 0; i < length; i++)
         {

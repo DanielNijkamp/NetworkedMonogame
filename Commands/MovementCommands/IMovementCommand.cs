@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using MediatR;
+using Microsoft.Xna.Framework;
 
 namespace Commands.MovementCommands;
 

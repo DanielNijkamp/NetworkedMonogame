@@ -1,6 +1,8 @@
-﻿namespace Commands;
+﻿using MediatR;
 
-public interface ICommand
+namespace Commands;
+
+public interface ICommand : IRequest
 {
     public Guid EntityID { get; set; }
 }
