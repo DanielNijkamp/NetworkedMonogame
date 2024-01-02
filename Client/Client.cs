@@ -15,7 +15,6 @@ namespace MonoGameNetworking;
 
 public class Client : Game
 {
-    
     //SignalR & MediatR object
     private readonly ClientNetworker clientNetworker;
     private readonly IServiceProvider serviceProvider;
@@ -42,61 +41,25 @@ public class Client : Game
         
         serviceProvider = ConfigureServices();
         
-        //Monogame initialization
-        _graphics = new GraphicsDeviceManager(this);
-        Content.RootDirectory = "Content";
-        IsMouseVisible = true;
+        _graphics = InitGraphics();
         
-        //Infrastructure initialization
-        baseWorld = new BaseWorld();
-        renderSystem = new RenderSystem(baseWorld);
-        inputSystem = new InputSystem(ClientID);
-        //transformSystem = new TransformSystem(baseWorld, inputSystem);
+        baseWorld = serviceProvider.GetRequiredService<BaseWorld>();
+        renderSystem = serviceProvider.GetRequiredService<RenderSystem>();
+        inputSystem = serviceProvider.GetRequiredService<InputSystem>();
+        clientNetworker = serviceProvider.GetRequiredService<ClientNetworker>();
+        networkedTransformSystem = serviceProvider.GetRequiredService<NetworkedTransformSystem>();
         
-        //networked initialization
-        clientNetworker = new ClientNetworker(serviceProvider.GetRequiredService<IMediator>(), "http://127.0.0.1:8080");
-        networkedTransformSystem = new NetworkedTransformSystem(baseWorld, inputSystem, clientNetworker);
-
-        Console.WriteLine("Do you want to connect? | Type [Y/N]");
-        var result = Console.Read();
-        if (result is 'Y' or 'y')
+        if (AskForConnection())
         {
-            //create our player
-            clientNetworker.SendCommand(new CreateEntityCommand 
-            { 
-                EntityID = ClientID, 
-                Components = new IComponent[] 
-                    { 
-                        new TransformComponent{Velocity = 5f} ,
-                        new RenderComponent(_graphics.GraphicsDevice, Content.Load<Texture2D>("ball"))
-                    }
-            });
+            CreatePlayer();
         }
         else
         {
             Environment.Exit(1);
         }
-
-        //turn on to burn your GPU
-        //_graphics.SynchronizeWithVerticalRetrace = false;
-        //base.IsFixedTimeStep = false;
-
-
-
-        //on startup: ask if user wants to connect
-        //Client > Server connect > Client confirmation
-        //Client asks server to create player with its client ID
-        // Player can now use InputSystem with its own clientID to tell its own player to move
-
     }
-    
-    /*protected override void LoadContent()
-    {
-        //Game logic initialization
-        //baseWorld.CreateEntity(ClientID, new TransformComponent{Velocity = 5f}, new RenderComponent(_graphics.GraphicsDevice, Content.Load<Texture2D>("ball")));
-        //transformSystem.Initialize(ClientID);
-    }*/
-    
+
+    #region Monogame Methods
     protected override void Update(GameTime gameTime)
     {
         var state = Keyboard.GetState();
@@ -104,22 +67,69 @@ public class Client : Game
         if (state.IsKeyDown(Keys.Escape))
             Exit();
         
-        //transformSystem.Process();
         networkedTransformSystem.Process();
         base.Update(gameTime);
     }
-
+    
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
         renderSystem.Process();
         base.Draw(gameTime);
     }
+
+    /*protected override void LoadContent()
+    {
+        //Game logic initialization
+        //baseWorld.CreateEntity(ClientID, new TransformComponent{Velocity = 5f}, new RenderComponent(_graphics.GraphicsDevice, Content.Load<Texture2D>("ball")));
+        //transformSystem.Initialize(ClientID);
+    }*/
+    #endregion
+    
+    private bool AskForConnection()
+    {
+        Console.WriteLine("Do you want to connect? | Type [Y/N]");
+        var result = Console.Read();
+        return result is 'Y' or 'y';
+    }
+
+    private async void CreatePlayer()
+    {
+        await clientNetworker.SendCommand(new CreateEntityCommand 
+        { 
+            EntityID = ClientID, 
+            Components = new IComponent[] 
+            { 
+                new TransformComponent{Velocity = 5f},
+                new RenderComponent(_graphics.GraphicsDevice, Content.Load<Texture2D>("ball"))
+            }
+        });
+    }
+    
+    private GraphicsDeviceManager InitGraphics()
+    {
+        //turn on to burn your GPU
+        //_graphics.SynchronizeWithVerticalRetrace = false;
+        //base.IsFixedTimeStep = false;
+        
+        var graphics = new GraphicsDeviceManager(this);
+        Content.RootDirectory = "Content";
+        IsMouseVisible = true;
+        return graphics;
+    }
+    
     private IServiceProvider ConfigureServices()
     {
         var services = new ServiceCollection();
-        
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        
+        services.AddSingleton<BaseWorld>();
+        
+        services.AddSingleton<InputSystem>();
+        services.AddSingleton<RenderSystem>();
+        services.AddSingleton<NetworkedTransformSystem>();
+        
+        //services.AddSingleton<TransformSystem>();
         
         return services.BuildServiceProvider();
     }
