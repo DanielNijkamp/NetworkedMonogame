@@ -21,8 +21,8 @@ public class TransformHandler : IRequestHandler<MovementCommand>
         var component = world.GetComponentOfType<TransformComponent>(entity.Value);
         
         Vector2.Add(component.Position, request.MovementVector);
-        var movementVector = Vector2.Normalize(request.MovementVector);
-        component.Position += movementVector * component.Velocity;
+        component.Position += Vector2.Normalize(request.MovementVector) * component.Velocity;
         Console.WriteLine(component.Position);
+        
     }
 }

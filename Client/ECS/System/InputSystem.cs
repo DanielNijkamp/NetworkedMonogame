@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading.Tasks;
 using Commands.EntityCommands;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -19,10 +18,10 @@ public class InputSystem
     {
         keyCommandMap = new Dictionary<Keys, MovementCommand>
         {
-            {Keys.W, new MovementCommand(entityId, new Vector2(0, -1))},
-            {Keys.A, new MovementCommand(entityId, new Vector2(-1, 0))},
-            {Keys.S, new MovementCommand(entityId, new Vector2(0, 1))},
-            {Keys.D, new MovementCommand(entityId, new Vector2(1, 0))},
+            {Keys.W, new MovementCommand{EntityID = entityId,  MovementVector = new Vector2(0, -1)}},
+            {Keys.A, new MovementCommand{EntityID = entityId, MovementVector = new Vector2(-1, 0)}},
+            {Keys.S, new MovementCommand{EntityID = entityId, MovementVector = new Vector2(0, 1)}},
+            {Keys.D, new MovementCommand{EntityID = entityId, MovementVector = new Vector2(1, 0)}},
         };
     }
     

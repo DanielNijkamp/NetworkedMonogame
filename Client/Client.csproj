@@ -33,6 +33,7 @@
       <ProjectReference Include="..\Commands\Commands.csproj" />
       <ProjectReference Include="..\ECS\ECS.csproj" />
       <ProjectReference Include="..\Handlers\Handlers.csproj" />
+      <ProjectReference Include="..\Serialization\Serialization.csproj" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="ECS\Components\" />

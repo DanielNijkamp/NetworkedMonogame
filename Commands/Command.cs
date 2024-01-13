@@ -8,5 +8,5 @@ namespace Commands;
 [MessagePack.Union(2, typeof(DeleteEntityCommand))]
 public class Command : IRequest
 {
-    public Guid EntityID { get; set; }
+   
 }

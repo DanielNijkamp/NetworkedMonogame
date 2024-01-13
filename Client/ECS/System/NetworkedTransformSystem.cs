@@ -8,7 +8,7 @@ using MediatR;
 
 namespace MonoGameNetworking.ECS.System;
 
-public class NetworkedTransformSystem : ISystem , IRequestHandler<MovementCommand>
+public class NetworkedTransformSystem : ISystem
 {
     private readonly World world;
     private readonly InputSystem inputSystem;
@@ -19,23 +19,17 @@ public class NetworkedTransformSystem : ISystem , IRequestHandler<MovementComman
         this.world = world;
         this.inputSystem = inputSystem;
         this.clientNetworker = clientNetworker;
+        
+        inputSystem.CommandCreated += Send;
     }
     
     public void Process()
     {
         inputSystem.Process();
-        inputSystem.CommandCreated += Send!;
     }
     
     private async void Send(object sender, MovementCommand request)
     {
         await clientNetworker.SendCommand(request);
-    }
-    
-    public async Task Handle(MovementCommand request, CancellationToken cancellationToken)
-    {
-        var entity = world.GetEntityById(request.EntityID);
-        var transformComponent = entity.Value.OfType<TransformComponent>().FirstOrDefault();
-        transformComponent.Position = request.MovementVector;
     }
 }

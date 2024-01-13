@@ -2,10 +2,13 @@
 using System.Reflection;
 using ECS;
 using MediatR;
+using MessagePack;
+using MessagePack.Resolvers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGameNetworking.ECS.System;
+using Serialization;
 
 namespace MonoGameNetworking;
 
@@ -96,7 +99,7 @@ public class Client : Game
         //turn on to burn your GPU
         //_graphics.SynchronizeWithVerticalRetrace = false;
         //base.IsFixedTimeStep = false;
-        TargetElapsedTime = TimeSpan.FromSeconds(1d / 15d); //30?
+        //TargetElapsedTime = TimeSpan.FromSeconds(1d / 30d); //30?
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
@@ -122,6 +125,9 @@ public class Client : Game
         services.AddSingleton<SpriteStorage>(s => new SpriteStorage(Content));
         services.AddSingleton<RenderSystem>();
         services.AddSingleton<NetworkedTransformSystem>();
+        
+        //serialization
+        var options = MessagePackSerializerOptions.Standard.WithResolver(CompositeResolver.Create(new Vector2Formatter()));
         
         //services.AddSingleton<TransformSystem>();
         
