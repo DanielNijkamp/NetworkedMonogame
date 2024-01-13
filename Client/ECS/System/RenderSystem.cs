@@ -1,45 +1,76 @@
 ﻿using System;
 using ECS;
+using ECS.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGameNetworking.ECS.Components;
 
 namespace MonoGameNetworking.ECS.System;
 
 public class RenderSystem : ISystem
 {
-    private readonly BaseWorld _baseWorld;
-
-    public RenderSystem(BaseWorld baseWorld)
+    private readonly World world;
+    private SpriteBatch spriteBatch;
+    private readonly SpriteStorage spriteStorage;
+    
+    private readonly GraphicsDeviceManager graphicsDeviceManager;
+    public RenderSystem(World world, GraphicsDeviceManager graphicsDeviceManager, SpriteStorage spriteStorage)
     {
-        this._baseWorld = baseWorld;
+        this.world = world;
+        this.graphicsDeviceManager = graphicsDeviceManager;
+        this.spriteStorage = spriteStorage;
+    }
+
+    public void LoadContent()
+    {
+        spriteBatch = new SpriteBatch(graphicsDeviceManager.GraphicsDevice);
     }
     
     public void Process()
     {
-        var components = _baseWorld.GetComponentForTypesImmutable(typeof(TransformComponent), typeof(RenderComponent));
-
+        //var components = world.GetComponentForTypesImmutable<Component>(typeof(TransformComponent), typeof(RenderComponent));
         
-        var length = components[0].Count;
+        var transformComponents = world.GetComponentsOfTypeImmutable<TransformComponent>();
+        var renderComponents = world.GetComponentsOfTypeImmutable<RenderComponent>();
+        
+        var length = transformComponents.Length;
+        
+        // Check there are renderComponents 
+        if (transformComponents.Length == 0 || renderComponents.Length == 0) return; // if any components found
+        
+        // Start rendering
+       spriteBatch.Begin();
+       
         for (int i = 0; i < length; i++)
         {
-            var transformComponent = components[0][i] as TransformComponent;
-            var renderComponent = components[1][i] as RenderComponent;
+            var transformComponent = transformComponents[i];
+            var renderComponent = renderComponents[i];
+
+            if (transformComponent == null || renderComponent == null)
+            {
+                Console.WriteLine($"[{i}]nd/th Iteration failed to render due to null components");
+                continue;
+            }
+
+            var texture = spriteStorage.GetSprite(renderComponent.TextureName);
+            if (texture == null)
+            {
+                Console.WriteLine($"error with loading texture");
+                continue;
+            }
             
-            renderComponent?.Sprite.Begin();
-            renderComponent?.Sprite.Draw(
-                renderComponent.Texture,
+            spriteBatch.Draw(
+                texture,
                 transformComponent.Position,
                 null,
                 Color.White,
                 0f,
-                new Vector2(renderComponent.Texture.Width / 2, renderComponent.Texture.Height / 2),
+                new Vector2(texture.Width / 2, texture.Height / 2),
                 Vector2.One,
                 SpriteEffects.None,
                 0f
             );
-            renderComponent?.Sprite.End();
         }
+        spriteBatch.End();
         
     }
 }

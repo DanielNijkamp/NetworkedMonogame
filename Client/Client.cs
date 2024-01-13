@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Reflection;
-using Commands.EntityCommands;
 using ECS;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGameNetworking.ECS.Components;
 using MonoGameNetworking.ECS.System;
-using MonoGameNetworking.ECS.System.Movement;
 
 namespace MonoGameNetworking;
 
@@ -17,55 +13,53 @@ public class Client : Game
 {
     //SignalR & MediatR object
     private readonly ClientNetworker clientNetworker;
-    private readonly IServiceProvider serviceProvider;
-    
-    //Monogame declaration
-    private static GraphicsDeviceManager _graphics;
+
+    //Other essentials
+    private readonly SpriteStorage spriteStorage;
+    private readonly GraphicsDeviceManager graphicsDeviceManager;
     
     //ECS declaration
-    private readonly BaseWorld baseWorld;
+    private readonly World world;
     private readonly InputSystem inputSystem;
     private readonly RenderSystem renderSystem;
     
     //private readonly TransformSystem transformSystem;
     private readonly NetworkedTransformSystem networkedTransformSystem;
     
-
     //Client data
-    private readonly Guid ClientID;
+    private Guid clientId;
     
     public Client()
     {
-        //Client data initialization
-        ClientID = Guid.NewGuid();
+        var serviceProvider = ConfigureServices();
         
-        serviceProvider = ConfigureServices();
+        graphicsDeviceManager = serviceProvider.GetRequiredService<GraphicsDeviceManager>();
+        spriteStorage = serviceProvider.GetRequiredService<SpriteStorage>();
         
-        _graphics = InitGraphics();
+        InitGraphics();
         
-        baseWorld = serviceProvider.GetRequiredService<BaseWorld>();
+        world = serviceProvider.GetRequiredService<World>();
+        
         renderSystem = serviceProvider.GetRequiredService<RenderSystem>();
         inputSystem = serviceProvider.GetRequiredService<InputSystem>();
+        
         clientNetworker = serviceProvider.GetRequiredService<ClientNetworker>();
         networkedTransformSystem = serviceProvider.GetRequiredService<NetworkedTransformSystem>();
         
-        if (AskForConnection())
-        {
-            CreatePlayer();
-        }
-        else
-        {
-            Environment.Exit(1);
-        }
+        EstablishConnection();
+        
     }
 
     #region Monogame Methods
     protected override void Update(GameTime gameTime)
     {
         var state = Keyboard.GetState();
-        
         if (state.IsKeyDown(Keys.Escape))
-            Exit();
+        {
+            Console.WriteLine("Disconnecting from server...");
+            clientNetworker.DisconnectAsync().Wait();
+            Console.WriteLine("Disconnected from server");
+        }
         
         networkedTransformSystem.Process();
         base.Update(gameTime);
@@ -73,59 +67,59 @@ public class Client : Game
     
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.CornflowerBlue);
+        graphicsDeviceManager.GraphicsDevice.Clear(Color.CornflowerBlue);
         renderSystem.Process();
         base.Draw(gameTime);
     }
 
-    /*protected override void LoadContent()
+    protected override void LoadContent()
     {
+        spriteStorage.CreateMapping("ball");
+        renderSystem.LoadContent();
         //Game logic initialization
         //baseWorld.CreateEntity(ClientID, new TransformComponent{Velocity = 5f}, new RenderComponent(_graphics.GraphicsDevice, Content.Load<Texture2D>("ball")));
         //transformSystem.Initialize(ClientID);
-    }*/
+    }
     #endregion
     
-    private bool AskForConnection()
+    private async void EstablishConnection()
     {
-        Console.WriteLine("Do you want to connect? | Type [Y/N]");
-        var result = Console.Read();
-        return result is 'Y' or 'y';
-    }
-
-    private async void CreatePlayer()
-    {
-        await clientNetworker.SendCommand(new CreateEntityCommand 
-        { 
-            EntityID = ClientID, 
-            Components = new IComponent[] 
-            { 
-                new TransformComponent{Velocity = 5f},
-                new RenderComponent(_graphics.GraphicsDevice, Content.Load<Texture2D>("ball"))
-            }
-        });
+        Console.WriteLine("Establish connection?");
+        var input = Console.ReadLine()!;
+        if (!input.Contains('Y') && !input.Contains('y')) return;
+        Console.WriteLine(input);
+        await clientNetworker.StartConnection();
     }
     
-    private GraphicsDeviceManager InitGraphics()
+    private void InitGraphics()
     {
         //turn on to burn your GPU
         //_graphics.SynchronizeWithVerticalRetrace = false;
         //base.IsFixedTimeStep = false;
-        
-        var graphics = new GraphicsDeviceManager(this);
+        TargetElapsedTime = TimeSpan.FromSeconds(1d / 15d); //30?
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        return graphics;
     }
+    
     
     private IServiceProvider ConfigureServices()
     {
+        clientId = Guid.NewGuid();
+        
         var services = new ServiceCollection();
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        services.AddMediatR(cfg => 
+        { 
+            cfg.RegisterServicesFromAssembly(Assembly.Load("Handlers")); 
+        });
         
-        services.AddSingleton<BaseWorld>();
+        services.AddSingleton<GraphicsDeviceManager>(g => new GraphicsDeviceManager(this));
         
-        services.AddSingleton<InputSystem>();
+        services.AddSingleton<World>();
+        services.AddSingleton<ClientNetworker>(serviceProvider => 
+            new ClientNetworker(serviceProvider.GetRequiredService<IMediator>(), "http://localhost:5000/server", clientId));
+        services.AddSingleton<InputSystem>(i => 
+            new InputSystem(clientId));
+        services.AddSingleton<SpriteStorage>(s => new SpriteStorage(Content));
         services.AddSingleton<RenderSystem>();
         services.AddSingleton<NetworkedTransformSystem>();
         

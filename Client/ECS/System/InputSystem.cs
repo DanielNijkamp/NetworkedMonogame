@@ -2,31 +2,34 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Commands.MovementCommands;
+using System.Threading.Tasks;
+using Commands.EntityCommands;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace MonoGameNetworking.ECS.System;
 
 public class InputSystem
 {
-    public event EventHandler<IMovementCommand> CommandCreated;
+    public event EventHandler<MovementCommand>? CommandCreated;
     
-    private readonly Dictionary<Keys, IMovementCommand> keyCommandMap;
+    private readonly Dictionary<Keys, MovementCommand> keyCommandMap;
 
-    public InputSystem(Guid EntityID)
+    public InputSystem(Guid entityId)
     {
-        keyCommandMap = new Dictionary<Keys, IMovementCommand>
+        keyCommandMap = new Dictionary<Keys, MovementCommand>
         {
-            {Keys.W, new UpCommand { EntityID = EntityID}},
-            {Keys.A, new LeftCommand { EntityID = EntityID}},
-            {Keys.S, new DownCommand { EntityID = EntityID}},
-            {Keys.D, new RightCommand { EntityID = EntityID}},
+            {Keys.W, new MovementCommand(entityId, new Vector2(0, -1))},
+            {Keys.A, new MovementCommand(entityId, new Vector2(-1, 0))},
+            {Keys.S, new MovementCommand(entityId, new Vector2(0, 1))},
+            {Keys.D, new MovementCommand(entityId, new Vector2(1, 0))},
         };
     }
     
     public void Process()
     {
         var parsedCommands = Keyboard.GetState().GetPressedKeys()
+            .AsParallel()
             .Where(keyCommandMap.ContainsKey)
             .Select(key => keyCommandMap[key])
             .ToImmutableArray();
@@ -38,7 +41,7 @@ public class InputSystem
             ParseInputToCommand(parsedCommands[i]);
         }
     }
-    private void ParseInputToCommand(IMovementCommand command)
+    private void ParseInputToCommand(MovementCommand command)
     {
         CommandCreated?.Invoke(this, command);
     }

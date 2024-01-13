@@ -11,23 +11,19 @@
         <PackageReference Include="MediatR" Version="12.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.10"/>
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="7.0.13" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.MessagePack" Version="7.0.13" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
         <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303"/>
         <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303"/>
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Client\Client.csproj" />
         <ProjectReference Include="..\Commands\Commands.csproj" />
         <ProjectReference Include="..\ECS\ECS.csproj" />
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
-    </ItemGroup>
-
-
-
-    <ItemGroup>
-      <Folder Include="Handlers\" />
     </ItemGroup>
 
 </Project>

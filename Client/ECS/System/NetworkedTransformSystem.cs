@@ -1,21 +1,20 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Commands.MovementCommands;
+using Commands.EntityCommands;
 using ECS;
+using ECS.Components;
 using MediatR;
-using MonoGameNetworking.ECS.Components;
 
-namespace MonoGameNetworking.ECS.System.Movement;
+namespace MonoGameNetworking.ECS.System;
 
-public class NetworkedTransformSystem : ISystem , IRequestHandler<IMovementCommand>
+public class NetworkedTransformSystem : ISystem , IRequestHandler<MovementCommand>
 {
-    private readonly BaseWorld world;
+    private readonly World world;
     private readonly InputSystem inputSystem;
     private readonly ClientNetworker clientNetworker;
     
-    public NetworkedTransformSystem(BaseWorld world, InputSystem inputSystem, ClientNetworker clientNetworker)
+    public NetworkedTransformSystem(World world, InputSystem inputSystem, ClientNetworker clientNetworker)
     {
         this.world = world;
         this.inputSystem = inputSystem;
@@ -28,12 +27,12 @@ public class NetworkedTransformSystem : ISystem , IRequestHandler<IMovementComma
         inputSystem.CommandCreated += Send!;
     }
     
-    private async void Send(object sender, IMovementCommand request)
+    private async void Send(object sender, MovementCommand request)
     {
         await clientNetworker.SendCommand(request);
     }
     
-    public async Task Handle(IMovementCommand request, CancellationToken cancellationToken)
+    public async Task Handle(MovementCommand request, CancellationToken cancellationToken)
     {
         var entity = world.GetEntityById(request.EntityID);
         var transformComponent = entity.Value.OfType<TransformComponent>().FirstOrDefault();

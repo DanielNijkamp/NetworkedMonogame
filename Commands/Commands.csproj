@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="MediatR" Version="12.2.0" />
+      <PackageReference Include="MessagePack.Annotations" Version="2.1.90" />
       <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
       <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
     </ItemGroup>

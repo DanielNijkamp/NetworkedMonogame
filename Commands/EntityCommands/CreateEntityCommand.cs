@@ -1,10 +1,10 @@
 ﻿using ECS;
+using MessagePack;
 
 namespace Commands.EntityCommands;
 
-public class CreateEntityCommand : ICommand
+[MessagePackObject(keyAsPropertyName: true)]
+public class CreateEntityCommand : Command
 {
-    public Guid EntityID { get; set; }
-
-    public IComponent[] Components { get; set; }
+    public required Component[] Components { get; set; }
 }

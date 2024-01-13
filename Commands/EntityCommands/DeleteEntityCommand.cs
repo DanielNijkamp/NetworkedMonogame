@@ -1,6 +1,9 @@
-﻿namespace Commands.EntityCommands;
+﻿using MessagePack;
 
-public class DeleteEntityCommand : ICommand
+namespace Commands.EntityCommands;
+
+[MessagePackObject(keyAsPropertyName: true)]
+public class DeleteEntityCommand : Command
 {
-    public Guid EntityID { get; set; }
+    
 }

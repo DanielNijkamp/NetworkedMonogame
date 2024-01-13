@@ -1,29 +1,29 @@
 ﻿using System;
 using System.Linq;
-using Commands.MovementCommands;
+using Commands.EntityCommands;
 using ECS;
+using ECS.Components;
 using Microsoft.Xna.Framework;
-using MonoGameNetworking.ECS.Components;
 
-namespace MonoGameNetworking.ECS.System.Movement;
+namespace MonoGameNetworking.ECS.System;
 
 public class TransformSystem : ISystem
 {
-    private readonly BaseWorld baseWorld;
+    private readonly World world;
     private readonly InputSystem inputSystem;
 
     private TransformComponent component;
 
-    public TransformSystem(BaseWorld baseWorld, InputSystem inputSystem)
+    public TransformSystem(World world, InputSystem inputSystem)
     {
-        this.baseWorld = baseWorld;
+        this.world = world;
         this.inputSystem = inputSystem;
         
     }
 
-    public void Initialize(Guid EnityTargetID)
+    public void Initialize(Guid enityTargetId)
     {
-        component = baseWorld.GetEntityById(EnityTargetID).Value.OfType<TransformComponent>().FirstOrDefault()!;
+        component = world.GetEntityById(enityTargetId).Value.OfType<TransformComponent>().FirstOrDefault()!;
         inputSystem.CommandCreated += SetPosition!;
     }
     
@@ -32,7 +32,7 @@ public class TransformSystem : ISystem
         inputSystem.Process();
     }
 
-    private void SetPosition(object sender, IMovementCommand command)
+    private void SetPosition(object sender, MovementCommand command)
     {
         Vector2.Add(component.Position, command.MovementVector);
         var movementVector = Vector2.Normalize(command.MovementVector);

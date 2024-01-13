@@ -1,3 +1,6 @@
+using System.Reflection;
+using ECS;
+using MessagePack;
 using Server;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,23 +9,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(hubOptions =>
+{
+    hubOptions.EnableDetailedErrors = true;
+}).AddMessagePackProtocol();
+builder.WebHost.UseUrls("http://localhost:5000");
 
+builder.Services.AddSingleton<World>();
+builder.Services.AddMediatR(cfg => 
+{
+    cfg.RegisterServicesFromAssembly(Assembly.Load("Handlers")); 
+});
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
+//app.UseHttpsRedirection();
+app.UseCors();
 app.UseAuthorization();
 
 app.MapControllers();
+
 app.MapHub<ServerHub>("/server");
 
 app.Run();
