@@ -23,11 +23,14 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(Assembly.Load("Handlers")); 
 });
 
+//custom serialization options
 var options = MessagePackSerializerOptions.Standard.
-    WithResolver(CompositeResolver.Create(new Vector2Formatter()))
-    .WithResolver(ContractlessStandardResolver.Instance);
-
-
+    WithResolver(
+        CompositeResolver.Create(
+            new Vector2Formatter()) 
+    )
+    .WithResolver(
+        ContractlessStandardResolver.Instance);
 
 var app = builder.Build();
 

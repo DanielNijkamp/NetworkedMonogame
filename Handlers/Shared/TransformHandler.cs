@@ -22,7 +22,7 @@ public class TransformHandler : IRequestHandler<MovementCommand>
         
         Vector2.Add(component.Position, request.MovementVector);
         component.Position += Vector2.Normalize(request.MovementVector) * component.Velocity;
-        Console.WriteLine(component.Position);
+        Console.WriteLine($"{request.EntityID}{component.Position}");
         
     }
 }

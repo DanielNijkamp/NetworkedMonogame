@@ -14,4 +14,8 @@
       <ProjectReference Include="..\Commands\Commands.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Server\" />
+    </ItemGroup>
+
 </Project>

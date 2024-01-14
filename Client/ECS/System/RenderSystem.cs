@@ -34,8 +34,12 @@ public class RenderSystem : ISystem
         
         var length = transformComponents.Length;
         
-        // Check there are renderComponents 
-        if (transformComponents.Length == 0 || renderComponents.Length == 0) return; // if any components found
+        if (transformComponents.Length == 0 || renderComponents.Length == 0)
+        {
+            Console.WriteLine("No transform or render components found");
+            return;
+        }
+          
         
         // Start rendering
        spriteBatch.Begin();

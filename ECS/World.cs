@@ -2,7 +2,7 @@
 
 public class World
 {
-    private readonly EntityStorage storage = new();
+    public EntityStorage storage { get; private set; } = new();
     
     public virtual KeyValuePair<Guid, Component[]> CreateEntity(Guid ID, params Component[] components)
     {
@@ -24,7 +24,7 @@ public class World
 
             foreach (var component in components)
             {
-                var type = component.GetType();
+                var type = nameof(component);
                 storage.ComponentsMap[type].Remove(component);
                 storage.ComponentsMap[type].TrimExcess();
             }
@@ -46,7 +46,7 @@ public class World
 
     public virtual List<T> GetComponentsOfType<T>() where T : Component
     {
-        return (storage.ComponentsMap.TryGetValue(typeof(T), out var result) ? result as List<T> : null)!;
+        return (storage.ComponentsMap.TryGetValue(typeof(T).AssemblyQualifiedName, out var result) ? result as List<T> : null)!;
     }
     
 
@@ -67,24 +67,29 @@ public class World
     }*/
     public virtual T[] GetComponentsOfTypeImmutable<T>() where T : Component
     {
-        return storage.ComponentsMap.TryGetValue(typeof(T), out var result) ? result.OfType<T>().ToArray() : Array.Empty<T>();
+        return storage.ComponentsMap.TryGetValue(typeof(T).AssemblyQualifiedName, out var result) ? result.OfType<T>().ToArray() : Array.Empty<T>();
     }
 
-    private void MapComponent(Component component)
+    private void MapComponent<T>(T component) where T : Component
     {
-        var componentType = component.GetType();
+        var componentName =  component.GetType().AssemblyQualifiedName;
         
         //check if type-instance mapping exists and create one if not
         //also create empty list so no nullExceptions
-        if (!storage.ComponentsMap.ContainsKey(componentType))
+        if (!storage.ComponentsMap.ContainsKey(componentName))
         {
-            storage.ComponentsMap.TryAdd(componentType, new List<Component>());
+            storage.ComponentsMap.TryAdd(componentName, new List<Component>());
         }
-        storage.ComponentsMap[componentType].Add(component);
+        storage.ComponentsMap[componentName].Add(component);
     }
 
     public T GetComponentOfType<T>(Component[] components) where T : Component
     {
         return components.OfType<T>().FirstOrDefault()!;
+    }
+
+    public void Replicate(EntityStorage targetStorage)
+    {
+        this.storage = targetStorage;
     }
 }

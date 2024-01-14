@@ -127,7 +127,13 @@ public class Client : Game
         services.AddSingleton<NetworkedTransformSystem>();
         
         //serialization
-        var options = MessagePackSerializerOptions.Standard.WithResolver(CompositeResolver.Create(new Vector2Formatter()));
+        var options = MessagePackSerializerOptions.Standard.
+            WithResolver(
+                CompositeResolver.Create(
+                    new Vector2Formatter()) 
+            )
+            .WithResolver(
+                ContractlessStandardResolver.Instance);
         
         //services.AddSingleton<TransformSystem>();
         
