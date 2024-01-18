@@ -42,7 +42,6 @@ public class ClientNetworker
     }
     private async Task CreatePlayer()
     {
-        Console.WriteLine($"Create player command sent: [{EntityID}]");
         await SendCommand(new CreateEntityCommand 
         { 
             EntityID = EntityID, 
@@ -52,11 +51,13 @@ public class ClientNetworker
                 new RenderComponent{TextureName = "ball"}
             }
         });
+        
     }
     
     public async Task StartConnection()
     {
         await hubConnection.StartAsync();
+        await hubConnection.InvokeAsync("CopyGameState");
     }
     public async Task DisconnectAsync()
     {
@@ -64,8 +65,6 @@ public class ClientNetworker
     }
     public async Task SendCommand<T>(T command) where T : Command
     {
-        Console.WriteLine($"Sending [{command}]");
-        
         var wrapper = new CommandWrapper
         {
             CommandType = typeof(T).AssemblyQualifiedName,
@@ -76,7 +75,6 @@ public class ClientNetworker
     
     private async Task ReceiveCommandWrapper(CommandWrapper wrapper)
     {
-        Console.WriteLine($"Received [{wrapper.Command}]");
         var type = Type.GetType(wrapper.CommandType);
         var command = MessagePackSerializer.Deserialize(type, MessagePackSerializer.Serialize(wrapper.Command)) as IRequest;
         await mediator.Send(command);

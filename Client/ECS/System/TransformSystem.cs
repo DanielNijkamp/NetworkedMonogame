@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Commands;
 using Commands.EntityCommands;
 using ECS;
 using ECS.Components;
@@ -23,7 +24,7 @@ public class TransformSystem : ISystem
 
     public void Initialize(Guid enityTargetId)
     {
-        component = world.GetEntityById(enityTargetId).Value.OfType<TransformComponent>().FirstOrDefault()!;
+        component = world.GetComponentsFromEntity(enityTargetId).OfType<TransformComponent>().FirstOrDefault()!;
         inputSystem.CommandCreated += SetPosition!;
     }
     

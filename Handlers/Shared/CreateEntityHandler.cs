@@ -2,7 +2,7 @@
 using ECS;
 using MediatR;
 
-namespace Handlers;
+namespace Handlers.Shared;
 
 public class CreateEntityHandler : IRequestHandler<CreateEntityCommand>
 {
@@ -14,12 +14,7 @@ public class CreateEntityHandler : IRequestHandler<CreateEntityCommand>
     }
     public async Task Handle(CreateEntityCommand request, CancellationToken cancellationToken)
     {
-        var result = world.CreateEntity(request.EntityID, request.Components);
+        world.CreateEntity(request.EntityID, request.Components);
         Console.WriteLine($"Entity created: [{request.EntityID}]");
-        foreach (var component in request.Components)
-        {
-            Console.WriteLine($"Entity: [{request.EntityID}] has component: [{component}]");
-        }
-        
     }
 }

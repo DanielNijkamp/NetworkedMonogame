@@ -4,16 +4,13 @@ public class World
 {
     public EntityStorage storage { get; private set; } = new();
     
-    public virtual KeyValuePair<Guid, Component[]> CreateEntity(Guid ID, params Component[] components)
+    public virtual void CreateEntity(Guid ID, params Component[] components)
     {
-        var kvp = new KeyValuePair<Guid, Component[]>(ID, components);
-        storage.Entities.Add(kvp.Key, kvp.Value);
-
+        storage.Entities.Add(ID, components);
         foreach (var component in components)
         {
             MapComponent(component);
         }
-        return kvp;
     }
 
     public virtual bool DeleteEntity(Guid ID)
@@ -24,9 +21,9 @@ public class World
 
             foreach (var component in components)
             {
-                var type = nameof(component);
-                storage.ComponentsMap[type].Remove(component);
-                storage.ComponentsMap[type].TrimExcess();
+                var typeName = component.GetType().AssemblyQualifiedName;
+                storage.ComponentsMap[typeName].Remove(component);
+                storage.ComponentsMap[typeName].TrimExcess();
             }
             storage.Entities.Remove(ID);
             storage.Entities.TrimExcess();
@@ -39,9 +36,9 @@ public class World
         }
     }
 
-    public KeyValuePair<Guid, Component[]> GetEntityById(Guid EntityID)
+    public Component[] GetComponentsFromEntity(Guid EntityID)
     {
-        return storage.Entities.FirstOrDefault(x => x.Key == EntityID);
+        return storage.Entities.FirstOrDefault(x => x.Key == EntityID).Value;
     }
 
     public virtual List<T> GetComponentsOfType<T>() where T : Component
@@ -88,8 +85,9 @@ public class World
         return components.OfType<T>().FirstOrDefault()!;
     }
 
-    public void Replicate(EntityStorage targetStorage)
+    public void Replicate(EntityStorage storage)
     {
-        this.storage = targetStorage;
+        this.storage = storage;
+        storage.RebuildComponentsMap();
     }
 }

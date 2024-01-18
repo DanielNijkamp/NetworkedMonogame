@@ -1,10 +1,11 @@
-﻿using Commands.EntityCommands;
+﻿using Commands;
+using Commands.EntityCommands;
 using ECS;
 using ECS.Components;
 using MediatR;
 using Microsoft.Xna.Framework;
 
-namespace Handlers;
+namespace Handlers.Shared;
 
 public class TransformHandler : IRequestHandler<MovementCommand>
 {
@@ -17,12 +18,9 @@ public class TransformHandler : IRequestHandler<MovementCommand>
     
     public async Task Handle(MovementCommand request, CancellationToken cancellationToken)
     {
-        var entity = world.GetEntityById(request.EntityID);
-        var component = world.GetComponentOfType<TransformComponent>(entity.Value);
+        var components = world.GetComponentsFromEntity(request.EntityID);
+        var component = world.GetComponentOfType<TransformComponent>(components);
         
-        Vector2.Add(component.Position, request.MovementVector);
         component.Position += Vector2.Normalize(request.MovementVector) * component.Velocity;
-        Console.WriteLine($"{request.EntityID}{component.Position}");
-        
     }
 }

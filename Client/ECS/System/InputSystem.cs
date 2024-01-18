@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Commands;
 using Commands.EntityCommands;
+using ECS;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace MonoGameNetworking.ECS.System;
 
-public class InputSystem
+public class InputSystem : ISystem
 {
     public event EventHandler<MovementCommand>? CommandCreated;
     
@@ -18,7 +20,7 @@ public class InputSystem
     {
         keyCommandMap = new Dictionary<Keys, MovementCommand>
         {
-            {Keys.W, new MovementCommand{EntityID = entityId,  MovementVector = new Vector2(0, -1)}},
+            {Keys.W, new MovementCommand{EntityID = entityId, MovementVector = new Vector2(0, -1)}},
             {Keys.A, new MovementCommand{EntityID = entityId, MovementVector = new Vector2(-1, 0)}},
             {Keys.S, new MovementCommand{EntityID = entityId, MovementVector = new Vector2(0, 1)}},
             {Keys.D, new MovementCommand{EntityID = entityId, MovementVector = new Vector2(1, 0)}},
@@ -27,17 +29,22 @@ public class InputSystem
     
     public void Process()
     {
-        var parsedCommands = Keyboard.GetState().GetPressedKeys()
-            .AsParallel()
-            .Where(keyCommandMap.ContainsKey)
-            .Select(key => keyCommandMap[key])
-            .ToImmutableArray();
-        
-        var length = parsedCommands.Length;
+        var keys = Keyboard.GetState().GetPressedKeys();
+        var commands = new List<MovementCommand>();
+
+        var length = keys.Length;
         for (int i = 0; i < length; i++)
-        { 
-            if (parsedCommands[i] == null) continue;
-            ParseInputToCommand(parsedCommands[i]);
+        {
+            if (keyCommandMap.TryGetValue(keys[i], out var command))
+            {
+                commands.Add(command);
+            }
+        }
+
+        var count = commands.Count;
+        for (int i = 0; i < count; i++)
+        {
+            ParseInputToCommand(commands[i]);
         }
     }
     private void ParseInputToCommand(MovementCommand command)

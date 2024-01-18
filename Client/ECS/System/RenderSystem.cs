@@ -32,19 +32,18 @@ public class RenderSystem : ISystem
         var transformComponents = world.GetComponentsOfTypeImmutable<TransformComponent>();
         var renderComponents = world.GetComponentsOfTypeImmutable<RenderComponent>();
         
-        var length = transformComponents.Length;
         
         if (transformComponents.Length == 0 || renderComponents.Length == 0)
         {
             Console.WriteLine("No transform or render components found");
             return;
         }
-          
-        
-        // Start rendering
+
+
+
+        var length = transformComponents.Length;
        spriteBatch.Begin();
-       
-        for (int i = 0; i < length; i++)
+       for (int i = 0; i < length; i++)
         {
             var transformComponent = transformComponents[i];
             var renderComponent = renderComponents[i];
@@ -66,12 +65,12 @@ public class RenderSystem : ISystem
                 texture,
                 transformComponent.Position,
                 null,
-                Color.White,
+                Color.Black,
                 0f,
                 new Vector2(texture.Width / 2, texture.Height / 2),
                 Vector2.One,
                 SpriteEffects.None,
-                0f
+                1f
             );
         }
         spriteBatch.End();

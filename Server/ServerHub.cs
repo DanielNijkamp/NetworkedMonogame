@@ -19,12 +19,10 @@ public class ServerHub : Hub
     {
         this.mediator = mediator;
         this.world = world;
-        Console.WriteLine("ServerHub is instantiated");
     }
     
     public async Task ReceiveCommandWrapper(CommandWrapper wrapper)
     {
-        Console.WriteLine($"Received [{wrapper.Command}]");
         var type = Type.GetType(wrapper.CommandType);
         var command = MessagePackSerializer.Deserialize(type, MessagePackSerializer.Serialize(wrapper.Command)) as IRequest;
         await mediator.Send(command);
@@ -33,21 +31,18 @@ public class ServerHub : Hub
     
     public override async Task OnConnectedAsync()
     {
-        await CopyGameState(world);
-        Console.WriteLine($"Initializing client");
         await Clients.Client(Context.ConnectionId).SendAsync("RequestInit");
         await base.OnConnectedAsync();
         Console.WriteLine($"Client initialized");
     }
 
-    public async Task CopyGameState(World world)
+    public async Task CopyGameState()
     {   
         Console.WriteLine("Copying game state to client");
         await Clients.Caller.SendAsync("ReceiveCommandWrapper", new CommandWrapper
         {
             CommandType = typeof(CopyGameStateCommand).AssemblyQualifiedName, 
             Command = new CopyGameStateCommand { Storage = world.storage}
-        
         });
     }
 
@@ -70,7 +65,6 @@ public class ServerHub : Hub
 
     public async Task BroadcastCommand(CommandWrapper wrapper)
     {
-        Console.WriteLine($"Broadcasting: [{wrapper}]");
         await Clients.All.SendAsync("ReceiveCommandWrapper", wrapper);
     }
 }

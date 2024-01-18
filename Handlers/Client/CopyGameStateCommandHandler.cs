@@ -6,16 +6,16 @@ namespace Handlers.Client;
 
 public class CopyGameStateCommandHandler : IRequestHandler<CopyGameStateCommand>
 {
-    private readonly World World;
+    private readonly World world;
     
     public CopyGameStateCommandHandler(World world)
     {
-        World = world;
+        this.world = world;
     }
     
     public async Task Handle(CopyGameStateCommand request, CancellationToken cancellationToken)
     {
-        World.Replicate(request.Storage);
+        world.Replicate(request.Storage);
         Console.WriteLine("Copied gamestate to client");
     }
 }

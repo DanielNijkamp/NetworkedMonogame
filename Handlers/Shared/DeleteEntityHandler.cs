@@ -2,7 +2,7 @@
 using ECS;
 using MediatR;
 
-namespace Handlers;
+namespace Handlers.Shared;
 
 public class DeleteEntityHandler : IRequestHandler<DeleteEntityCommand>
 {
@@ -15,7 +15,7 @@ public class DeleteEntityHandler : IRequestHandler<DeleteEntityCommand>
     
     public async Task Handle(DeleteEntityCommand request, CancellationToken cancellationToken)
     {
-        var result = world.DeleteEntity(request.EntityID);
-        Console.WriteLine($"Deleted entity: [{request.EntityID}] was [{result}]");
+        world.DeleteEntity(request.EntityID);
+        Console.WriteLine($"Deleted entity: [{request.EntityID}]");
     }
 }

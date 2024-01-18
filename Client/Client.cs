@@ -31,9 +31,13 @@ public class Client : Game
     
     //Client data
     private Guid clientId;
+    private Color color;
     
     public Client()
     {
+        var rnd = new Random();
+        color =  new Color(rnd.Next(256), rnd.Next(256), rnd.Next(256));
+        
         var serviceProvider = ConfigureServices();
         
         graphicsDeviceManager = serviceProvider.GetRequiredService<GraphicsDeviceManager>();
@@ -63,14 +67,13 @@ public class Client : Game
             clientNetworker.DisconnectAsync().Wait();
             Console.WriteLine("Disconnected from server");
         }
-        
         networkedTransformSystem.Process();
         base.Update(gameTime);
     }
     
     protected override void Draw(GameTime gameTime)
     {
-        graphicsDeviceManager.GraphicsDevice.Clear(Color.CornflowerBlue);
+        graphicsDeviceManager.GraphicsDevice.Clear(color);
         renderSystem.Process();
         base.Draw(gameTime);
     }
@@ -97,7 +100,7 @@ public class Client : Game
     private void InitGraphics()
     {
         //turn on to burn your GPU
-        //_graphics.SynchronizeWithVerticalRetrace = false;
+        //graphicsDeviceManager.SynchronizeWithVerticalRetrace = false;
         //base.IsFixedTimeStep = false;
         //TargetElapsedTime = TimeSpan.FromSeconds(1d / 30d); //30?
         Content.RootDirectory = "Content";
