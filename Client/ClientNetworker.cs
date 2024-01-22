@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Commands;
 using Commands.EntityCommands;
 using ECS;
 using ECS.Components;
+using Leaderboard.DTO;
 using MediatR;
 using MessagePack;
 using Microsoft.AspNetCore.Mvc;
@@ -78,5 +81,31 @@ public class ClientNetworker
         var type = Type.GetType(wrapper.CommandType);
         var command = MessagePackSerializer.Deserialize(type, MessagePackSerializer.Serialize(wrapper.Command)) as IRequest;
         await mediator.Send(command);
+    }
+    public async Task QueryLeaderboard()
+    {
+        var handler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
+        };
+        using (var client = new HttpClient(handler))
+        {
+            client.BaseAddress = new Uri("https://localhost:5227");
+            try
+            {
+                var response = await client.GetAsync("/leaderboard");
+                response.EnsureSuccessStatusCode();
+
+                var stringResult = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Response: " + stringResult);
+                var leaderboardData = JsonSerializer.Deserialize<LeaderboardQueryDto>(stringResult);
+                Console.WriteLine($"{leaderboardData.Leaderboard.Keys}, {leaderboardData.Leaderboard.Values}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e + " thrown: " + e.Message);
+            }
+        }
+            
     }
 }

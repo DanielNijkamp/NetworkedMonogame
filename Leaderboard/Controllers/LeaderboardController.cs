@@ -1,4 +1,5 @@
-﻿using Leaderboard.DTO;
+﻿using System.Text.Json.Serialization;
+using Leaderboard.DTO;
 using Leaderboard.Service;
 using Microsoft.AspNetCore.Mvc;
 

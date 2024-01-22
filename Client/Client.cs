@@ -67,6 +67,12 @@ public class Client : Game
             clientNetworker.DisconnectAsync().Wait();
             Console.WriteLine("Disconnected from server");
         }
+
+        if (state.IsKeyDown(Keys.Q))
+        {
+            Console.WriteLine("Querying");
+            clientNetworker.QueryLeaderboard();
+        }
         networkedTransformSystem.Process();
         base.Update(gameTime);
     }
