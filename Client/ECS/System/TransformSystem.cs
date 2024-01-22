@@ -33,7 +33,7 @@ public class TransformSystem : ISystem
         inputSystem.Process();
     }
 
-    private void SetPosition(object sender, MovementCommand command)
+    private void SetPosition(object sender, MoveCommand command)
     {
         Vector2.Add(component.Position, command.MovementVector);
         var movementVector = Vector2.Normalize(command.MovementVector);

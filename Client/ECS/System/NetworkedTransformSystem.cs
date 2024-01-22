@@ -29,7 +29,7 @@ public class NetworkedTransformSystem : ISystem
         inputSystem.Process();
     }
     
-    private async void Send(object sender, MovementCommand request)
+    private async void Send(object sender, MoveCommand request)
     {
         await clientNetworker.SendCommand(request);
     }

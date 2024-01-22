@@ -12,25 +12,25 @@ namespace MonoGameNetworking.ECS.System;
 
 public class InputSystem : ISystem
 {
-    public event EventHandler<MovementCommand>? CommandCreated;
+    public event EventHandler<MoveCommand>? CommandCreated;
     
-    private readonly Dictionary<Keys, MovementCommand> keyCommandMap;
+    private readonly Dictionary<Keys, MoveCommand> keyCommandMap;
 
     public InputSystem(Guid entityId)
     {
-        keyCommandMap = new Dictionary<Keys, MovementCommand>
+        keyCommandMap = new Dictionary<Keys, MoveCommand>
         {
-            {Keys.W, new MovementCommand{EntityID = entityId, MovementVector = new Vector2(0, -1)}},
-            {Keys.A, new MovementCommand{EntityID = entityId, MovementVector = new Vector2(-1, 0)}},
-            {Keys.S, new MovementCommand{EntityID = entityId, MovementVector = new Vector2(0, 1)}},
-            {Keys.D, new MovementCommand{EntityID = entityId, MovementVector = new Vector2(1, 0)}},
+            {Keys.W, new MoveCommand{EntityID = entityId, MovementVector = new Vector2(0, -1)}},
+            {Keys.A, new MoveCommand{EntityID = entityId, MovementVector = new Vector2(-1, 0)}},
+            {Keys.S, new MoveCommand{EntityID = entityId, MovementVector = new Vector2(0, 1)}},
+            {Keys.D, new MoveCommand{EntityID = entityId, MovementVector = new Vector2(1, 0)}},
         };
     }
     
     public void Process()
     {
         var keys = Keyboard.GetState().GetPressedKeys();
-        var commands = new List<MovementCommand>();
+        var commands = new List<MoveCommand>();
 
         var length = keys.Length;
         for (int i = 0; i < length; i++)
@@ -47,7 +47,7 @@ public class InputSystem : ISystem
             ParseInputToCommand(commands[i]);
         }
     }
-    private void ParseInputToCommand(MovementCommand command)
+    private void ParseInputToCommand(MoveCommand command)
     {
         CommandCreated?.Invoke(this, command);
     }

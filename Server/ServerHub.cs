@@ -15,16 +15,24 @@ public class ServerHub : Hub
     
     private readonly IMediator mediator;
     private readonly World world;
-    public ServerHub(IMediator mediator, World world)
+    private readonly CommandPublisher commandPublisher;
+    
+    public ServerHub(IMediator mediator, World world, CommandPublisher commandPublisher)
     {
         this.mediator = mediator;
         this.world = world;
+        this.commandPublisher = commandPublisher;
     }
     
     public async Task ReceiveCommandWrapper(CommandWrapper wrapper)
     {
         var type = Type.GetType(wrapper.CommandType);
-        var command = MessagePackSerializer.Deserialize(type, MessagePackSerializer.Serialize(wrapper.Command)) as IRequest;
+        var command = MessagePackSerializer.Deserialize(type, MessagePackSerializer.Serialize(wrapper.Command)) as Command;
+
+        if (command.GetType() == typeof(MoveCommand))
+        {
+            commandPublisher.PublishMoveCommand((MoveCommand)command);
+        }
         await mediator.Send(command);
         await BroadcastCommand(wrapper);
     }

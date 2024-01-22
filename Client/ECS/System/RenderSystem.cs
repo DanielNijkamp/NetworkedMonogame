@@ -65,7 +65,7 @@ public class RenderSystem : ISystem
                 texture,
                 transformComponent.Position,
                 null,
-                Color.Black,
+                Color.White,
                 0f,
                 new Vector2(texture.Width / 2, texture.Height / 2),
                 Vector2.One,

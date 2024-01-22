@@ -18,6 +18,8 @@ builder.Services.AddSignalR(hubOptions =>
 builder.WebHost.UseUrls("http://localhost:5000");
 
 builder.Services.AddSingleton<World>();
+builder.Services.AddSingleton<CommandPublisher>();
+
 builder.Services.AddMediatR(cfg => 
 {
     cfg.RegisterServicesFromAssembly(Assembly.Load("Handlers")); 

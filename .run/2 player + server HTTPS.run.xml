@@ -2,7 +2,7 @@
   <configuration default="false" name="2 player + server HTTPS" type="CompoundRunConfigurationType">
     <toRun name="Server: https" type="LaunchSettings" />
     <toRun name="MonoGameNetworking" type="DotNetProject" />
-    <toRun name="MonoGameNetworking(2nd player)" type="DotNetProject" />
+    <toRun name="MonoGameNetworking (1)" type="DotNetProject" />
     <method v="2" />
   </configuration>
 </component>

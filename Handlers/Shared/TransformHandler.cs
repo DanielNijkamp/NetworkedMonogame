@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace Handlers.Shared;
 
-public class TransformHandler : IRequestHandler<MovementCommand>
+public class TransformHandler : IRequestHandler<MoveCommand>
 {
     private readonly World world;
 
@@ -16,7 +16,7 @@ public class TransformHandler : IRequestHandler<MovementCommand>
         this.world = world;
     }
     
-    public async Task Handle(MovementCommand request, CancellationToken cancellationToken)
+    public async Task Handle(MoveCommand request, CancellationToken cancellationToken)
     {
         var components = world.GetComponentsFromEntity(request.EntityID);
         var component = world.GetComponentOfType<TransformComponent>(components);

@@ -28,15 +28,13 @@
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.MessagePack" Version="7.0.13" />
         <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303"/>
         <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303"/>
+        <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Commands\Commands.csproj" />
       <ProjectReference Include="..\ECS\ECS.csproj" />
       <ProjectReference Include="..\Handlers\Handlers.csproj" />
       <ProjectReference Include="..\Serialization\Serialization.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="ECS\Components\" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="Microsoft.AspNetCore.Mvc.Core">
